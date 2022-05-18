@@ -54,15 +54,17 @@ hi LineNr guibg=NONE ctermbg=NONE
 hi SignColumn guibg=NONE ctermbg=NONE
 hi EndOfBuffer guibg=NONE ctermbg=NONE
 
-"""""""""""""""""""" LSP Setting
+"""""""""""""""""""" LSP Settings
 lua << EOF
 require('lspconfig').tsserver.setup{}
 require'lspconfig'.eslint.setup{}
+require'lspconfig'.cssls.setup{}
+require'lspconfig'.html.setup{}
 require("nvim-lsp-installer").setup{}
 require('lualine').setup{}
 EOF
 
-" Setup Completation with nvim-cmp
+""""""""" Setup Completation with nvim-cmp
 set completeopt=menu,menuone,noselect
 
 lua << EOF
@@ -130,8 +132,47 @@ lua << EOF
   require('lspconfig')['tsserver'].setup {
     capabilities = capabilities
   }
+local kind_icons = {
+  Text = "",
+  Method = "",
+  Function = "",
+  Constructor = "",
+  Field = "",
+  Variable = "",
+  Class = "ﴯ",
+  Interface = "",
+  Module = "",
+  Property = "ﰠ",
+  Unit = "",
+  Value = "",
+  Enum = "",
+  Keyword = "",
+  Snippet = "",
+  Color = "",
+  File = "",
+  Reference = "",
+  Folder = "",
+  EnumMember = "",
+  Constant = "",
+  Struct = "",
+  Event = "",
+  Operator = "",
+  TypeParameter = ""
+}
+
+local cmp = require('cmp')
+cmp.setup {
+  formatting = {
+    format = function(entry, vim_item)
+      -- Kind icons
+      vim_item.kind = string.format('%s', kind_icons[vim_item.kind]) -- This concatonates the icons 
+      return vim_item
+    end
+  },
+}
 EOF
 
+"""""""""" Setup Treesitter
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
@@ -159,5 +200,27 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+}
+EOF
+
+""""""""" Setup Completation for CSS
+lua << EOF
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+require'lspconfig'.cssls.setup {
+  capabilities = capabilities,
+}
+EOF
+
+"""""""""" Setup Completion for HTML
+lua << EOF
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+require'lspconfig'.html.setup {
+  capabilities = capabilities,
 }
 EOF
