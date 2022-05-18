@@ -1,6 +1,7 @@
 call plug#begin()
 " Themes
 Plug 'Mofiqul/dracula.nvim'
+Plug 'ayu-theme/ayu-vim'
 " Lualine - Beautiful modeline with icons
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -17,6 +18,10 @@ Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 " Treesitter for better syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" HTML Autotag - write both inicial and closing tag
+Plug 'alvan/vim-closetag'
+" Auto pairs for brackets
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 """"""""""""""""""""  Basic Settings
@@ -42,12 +47,15 @@ set noshowmode
 set nocompatible
 " Keep block cursor on Insert mode
 set guicursor=i:block
+" Jumps to matching bracket
+set showmatch matchtime=3
 " Colors
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
  set termguicolors
 endif
-colorscheme dracula
+let ayucolor="dark"   " for dark version of theme
+colorscheme ayu
 " Transparent background
 hi Normal guibg=NONE ctermbg=NONE
 hi LineNr guibg=NONE ctermbg=NONE
@@ -83,13 +91,13 @@ lua << EOF
       -- documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
-      ['<CS-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<CS-f>'] = cmp.mapping.scroll_docs(4),
-      ['<S-f>'] = cmp.mapping.complete(),
-      ['<C-f>'] = cmp.mapping.abort(),
-      ['<S-l>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-      ['<S-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-      ['<S-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-n>'] = cmp.mapping.scroll_docs(4),
+      ['<M-q>'] = cmp.mapping.complete(),
+      ['<M-f>'] = cmp.mapping.abort(),
+      ['<M-l>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<M-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+      ['<M-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -224,3 +232,19 @@ require'lspconfig'.html.setup {
   capabilities = capabilities,
 }
 EOF
+
+"""""""""" Setup HTML Autotag
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+let g:closetag_filetypes = 'html,xhtml,phtml'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_regions = {
+    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+    \ 'javascript.jsx': 'jsxRegion',
+    \ 'typescriptreact': 'jsxRegion,tsxRegion',
+    \ 'javascriptreact': 'jsxRegion',
+    \ }
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
+
