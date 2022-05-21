@@ -22,6 +22,8 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'alvan/vim-closetag'
 " Auto pairs for brackets
 Plug 'jiangmiao/auto-pairs'
+" Emmet for fast write HTML-like code
+Plug 'mattn/emmet-vim'
 call plug#end()
 
 """"""""""""""""""""  Basic Settings
@@ -35,8 +37,8 @@ set showtabline=0
 " Ident/Space Settings
 set expandtab
 set tabstop=2
-set nosmartindent
-set noautoindent
+set smartindent
+set autoindent
 set shiftwidth=2
 set colorcolumn=80
 " Hide line/column number in the bottom panel
@@ -49,6 +51,16 @@ set nocompatible
 set guicursor=i:block
 " Jumps to matching bracket
 set showmatch matchtime=3
+set scrolloff=8      " Minimum number of lines to keep above and below the cursor
+set colorcolumn=100  " Draws a line at the given line to keep aware of the line size
+set signcolumn=yes   " Add a column on the left. Useful for linting
+set cmdheight=2      " Give more space for displaying messages
+set updatetime=100   " Time in miliseconds to consider the changes
+set encoding=utf-8   " The encoding should be utf-8 to activate the font icons
+set nobackup         " No backup files
+set nowritebackup    " No backup files
+set splitright       " Create the vertical splits to the right
+set splitbelow       " Create the horizontal splits below
 " Colors
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
@@ -91,8 +103,8 @@ lua << EOF
       -- documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-n>'] = cmp.mapping.scroll_docs(4),
+      ['<M-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<M-n>'] = cmp.mapping.scroll_docs(4),
       ['<M-q>'] = cmp.mapping.complete(),
       ['<M-f>'] = cmp.mapping.abort(),
       ['<M-l>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
@@ -106,7 +118,6 @@ lua << EOF
       { name = 'buffer' },
     })
   })
-
   -- Set configuration for specific filetype.
   cmp.setup.filetype('gitcommit', {
     sources = cmp.config.sources({
@@ -247,4 +258,3 @@ let g:closetag_regions = {
     \ }
 let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
-
