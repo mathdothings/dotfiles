@@ -1,7 +1,9 @@
 call plug#begin()
 " Themes
-Plug 'Mofiqul/dracula.nvim'
-Plug 'ayu-theme/ayu-vim'
+Plug 'Mofiqul/dracula.nvim'   " dracula
+Plug 'ayu-theme/ayu-vim'      " ayu
+Plug 'morhetz/gruvbox'        " gruvbox
+Plug 'navarasu/onedark.nvim'  " onedark
 " Lualine - Beautiful modeline with icons
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -24,6 +26,10 @@ Plug 'alvan/vim-closetag'
 Plug 'jiangmiao/auto-pairs'
 " Emmet for fast write HTML-like code
 Plug 'mattn/emmet-vim'
+" Prettier for smart/auto code formating
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+" Coloresque for colors preview
+Plug 'gko/vim-coloresque'
 call plug#end()
 
 """"""""""""""""""""  Basic Settings
@@ -36,11 +42,11 @@ set number
 set showtabline=0
 " Ident/Space Settings
 set expandtab
-set tabstop=2
-set smartindent
-set autoindent
 set shiftwidth=2
-set colorcolumn=80
+set noautoindent
+set indentexpr=
+set nocindent
+set nosmartindent
 " Hide line/column number in the bottom panel
 set noruler
 " Hide mode bar display in the bottom panel
@@ -52,9 +58,9 @@ set guicursor=i:block
 " Jumps to matching bracket
 set showmatch matchtime=3
 set scrolloff=8      " Minimum number of lines to keep above and below the cursor
-set colorcolumn=100  " Draws a line at the given line to keep aware of the line size
+set colorcolumn=80  " Draws a line at the given line to keep aware of the line size
 set signcolumn=yes   " Add a column on the left. Useful for linting
-set cmdheight=2      " Give more space for displaying messages
+set cmdheight=1      " Give more space for displaying messages
 set updatetime=100   " Time in miliseconds to consider the changes
 set encoding=utf-8   " The encoding should be utf-8 to activate the font icons
 set nobackup         " No backup files
@@ -66,14 +72,22 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
  set termguicolors
 endif
-let ayucolor="dark"   " for dark version of theme
-colorscheme ayu
+" let ayucolor="dark"   " for dark version of theme
+let g:onedark_config = {
+    \ 'style': 'cool',
+\}
+colorscheme onedark
 " Transparent background
 hi Normal guibg=NONE ctermbg=NONE
 hi LineNr guibg=NONE ctermbg=NONE
 hi SignColumn guibg=NONE ctermbg=NONE
 hi EndOfBuffer guibg=NONE ctermbg=NONE
-
+"""""" Prettier settings
+let g:prettier#autoformat = 1
+let g:prettier#autoformat_require_pragma = 0
+let g:prettier#quickfix_enabled = 0
+let g:prettier#quickfix_auto_focus = 0
+" autocmd TextChanged,InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.svelte,*.yaml,*.html PrettierAsync
 """""""""""""""""""" LSP Settings
 lua << EOF
 require('lspconfig').tsserver.setup{}
