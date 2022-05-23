@@ -1,13 +1,13 @@
 call plug#begin()
-" Themes
-Plug 'Mofiqul/dracula.nvim'   " dracula
-Plug 'ayu-theme/ayu-vim'      " ayu
-Plug 'morhetz/gruvbox'        " gruvbox
-Plug 'navarasu/onedark.nvim'  " onedark
-" Lualine - Beautiful modeline with icons
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'kyazdani42/nvim-web-devicons'
-" LSP Plugins
+"""""""""""""""""""" Themes
+Plug 'Mofiqul/dracula.nvim'               " dracula
+Plug 'ayu-theme/ayu-vim'                  " ayu 
+Plug 'morhetz/gruvbox'                    " gruvbox 
+Plug 'navarasu/onedark.nvim'              " onedark 
+Plug 'nvim-lualine/lualine.nvim'          " Lualine - Beautiful modeline with icons
+Plug 'kyazdani42/nvim-web-devicons'       " Beautiful dev icons in modeline bar
+
+"""""""""""""""""""" LSP Plugins
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -15,58 +15,59 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
-" For vsnip users - snippet Plugins
+
+"""""""""""""""""""" For vsnip users - snippet Plugins
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
-" Treesitter for better syntax highlight
+
+"""""""""""""""""""" Treesitter for better syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" HTML Autotag - write both inicial and closing tag
-Plug 'alvan/vim-closetag'
-" Auto pairs for brackets
-Plug 'jiangmiao/auto-pairs'
-" Emmet for fast write HTML-like code
-Plug 'mattn/emmet-vim'
-" Prettier for smart/auto code formating
+Plug 'alvan/vim-closetag'                 " HTML Autotag - write both inicial and closing tag
+Plug 'jiangmiao/auto-pairs'               " Auto pairs for brackets
+Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
+
+"""""""""""""""""""" Prettier for smart code syntax highlight
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
-" Coloresque for colors preview
-Plug 'gko/vim-coloresque'
+Plug 'gko/vim-coloresque'                 " Coloresque for colors preview
+Plug 'matze/vim-move'                     " vim-move to move lines/blocks easily
 call plug#end()
 
 """"""""""""""""""""  Basic Settings
-" Enable syntax highlight
-syntax on
-syntax enable
-" Show line numbers left side
+syntax on                   " Enable syntax highlight
+syntax enable               " Enable syntax highlight for some plugings
+"set cursorline cursorcolumn " Highlight current line/column
+                            " Show line numbers left side
 set number
-" Hide top 'filename' bar
-set showtabline=0
-" Ident/Space Settings
+set virtualedit +=onemore   " To go to end of line properly
+set showtabline=0           " Hide top 'filename' bar
+
+"""""""""""""""""""" Ident/Space Settings
 set expandtab
 set shiftwidth=2
-set noautoindent
+set tabstop=2
+set softtabstop=2
 set indentexpr=
 set nocindent
 set nosmartindent
-" Hide line/column number in the bottom panel
-set noruler
-" Hide mode bar display in the bottom panel
-set noshowmode
-" Turns nvim/vim incompatible with the old vi text editor
-set nocompatible
-" Keep block cursor on Insert mode
-set guicursor=i:block
-" Jumps to matching bracket
-set showmatch matchtime=3
-set scrolloff=8      " Minimum number of lines to keep above and below the cursor
-set colorcolumn=80  " Draws a line at the given line to keep aware of the line size
-set signcolumn=yes   " Add a column on the left. Useful for linting
-set cmdheight=1      " Give more space for displaying messages
-set updatetime=100   " Time in miliseconds to consider the changes
-set encoding=utf-8   " The encoding should be utf-8 to activate the font icons
-set nobackup         " No backup files
-set nowritebackup    " No backup files
-set splitright       " Create the vertical splits to the right
-set splitbelow       " Create the horizontal splits below
+set noruler                 " Hide line/column number in the bottom panel
+set noshowmode              " Hide mode bar display in the bottom panel
+set guicursor=i:block       " Keep block cursor on insert mode
+set showmatch matchtime=3   " Jumps to mactching bracket
+set scrolloff=10            " Minimum number of lines to keep above and below the cursor     
+set colorcolumn=80          " Draws a line at the given line to keep aware of the line size
+set signcolumn=yes          " Add a column on the left. Useful for linting
+set cmdheight=1             " Give more space for displaying messages
+set updatetime=100          " Time in miliseconds to consider the changes
+set encoding=utf-8          " The encoding should be utf-8 to activate the font icons
+set nobackup                " No backup files
+set noswapfile              " Disable creating swapfile
+set nowritebackup           " No backup files
+set splitright              " Create the vertical splits to the right
+set splitbelow              " Create the horizontal splits below
+
+"""""""""""""""""""" Mappings
+let mapleader = "\\"        " <leader> key for commands
+let maplocalleader = "\\"   " <localleader>
 " Colors
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
@@ -87,7 +88,6 @@ let g:prettier#autoformat = 1
 let g:prettier#autoformat_require_pragma = 0
 let g:prettier#quickfix_enabled = 0
 let g:prettier#quickfix_auto_focus = 0
-" autocmd TextChanged,InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.svelte,*.yaml,*.html PrettierAsync
 """""""""""""""""""" LSP Settings
 lua << EOF
 require('lspconfig').tsserver.setup{}
