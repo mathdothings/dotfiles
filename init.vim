@@ -4,6 +4,11 @@ Plug 'Mofiqul/dracula.nvim'               " dracula
 Plug 'ayu-theme/ayu-vim'                  " ayu 
 Plug 'morhetz/gruvbox'                    " gruvbox 
 Plug 'navarasu/onedark.nvim'              " onedark 
+Plug 'shaunsingh/solarized.nvim'          " solarized
+Plug 'mhartington/oceanic-next'           " oceanic-next
+Plug 'EdenEast/nightfox.nvim'             " nightfox
+
+"""""""""""""""""""" Lualine and dev-icons
 Plug 'nvim-lualine/lualine.nvim'          " Lualine - Beautiful modeline with icons
 Plug 'kyazdani42/nvim-web-devicons'       " Beautiful dev icons in modeline bar
 
@@ -28,20 +33,10 @@ Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
 
 """""""""""""""""""" Prettier for smart code syntax highlight
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
-Plug 'gko/vim-coloresque'                 " Coloresque for colors preview
-Plug 'matze/vim-move'                     " vim-move to move lines/blocks easily
+Plug 'norcalli/nvim-colorizer.lua'
 call plug#end()
 
-""""""""""""""""""""  Basic Settings
-syntax on                   " Enable syntax highlight
-syntax enable               " Enable syntax highlight for some plugings
-"set cursorline cursorcolumn " Highlight current line/column
-                            " Show line numbers left side
-set number
-set virtualedit +=onemore   " To go to end of line properly
-set showtabline=0           " Hide top 'filename' bar
-
-"""""""""""""""""""" Ident/Space Settings
+""""""""""""""""""""" Ident/Space Settings
 set expandtab
 set shiftwidth=2
 set tabstop=2
@@ -49,13 +44,22 @@ set softtabstop=2
 set indentexpr=
 set nocindent
 set nosmartindent
+
+""""""""""""""""""""" Basic Settings
+syntax on                   " Enable syntax highlight
+syntax enable               " Enable syntax highlight for some plugings
+set cursorline              " Enable highlight for current line
+set cursorlineopt=number    " Enable highlight just for current line number
+set number                  " Show line numbers left side
+set virtualedit +=onemore   " To go to end of line properly
+set showtabline=0           " Hide top 'filename' bar
 set noruler                 " Hide line/column number in the bottom panel
 set noshowmode              " Hide mode bar display in the bottom panel
 set guicursor=i:block       " Keep block cursor on insert mode
 set showmatch matchtime=3   " Jumps to mactching bracket
 set scrolloff=10            " Minimum number of lines to keep above and below the cursor     
 set colorcolumn=80          " Draws a line at the given line to keep aware of the line size
-set signcolumn=yes          " Add a column on the left. Useful for linting
+set signcolumn=yes:1        " Add a column on the left. Useful for linting
 set cmdheight=1             " Give more space for displaying messages
 set updatetime=100          " Time in miliseconds to consider the changes
 set encoding=utf-8          " The encoding should be utf-8 to activate the font icons
@@ -65,30 +69,38 @@ set nowritebackup           " No backup files
 set splitright              " Create the vertical splits to the right
 set splitbelow              " Create the horizontal splits below
 
-"""""""""""""""""""" Mappings
+""""""""""""""""""""" Mappings
+noremap <M-j> <Esc>:m .+1<CR>==gn
+noremap <M-k> <Esc>:m .-2<CR>==gn
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
 let mapleader = "\\"        " <leader> key for commands
 let maplocalleader = "\\"   " <localleader>
-" Colors
+
+""""""""""""""""""""" Colors
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
  set termguicolors
 endif
 " let ayucolor="dark"   " for dark version of theme
 let g:onedark_config = {
-    \ 'style': 'cool',
+    \ 'style': 'darker',
 \}
-colorscheme onedark
+let ayucolor="mirage"
+colorscheme nightfox
 " Transparent background
-hi Normal guibg=NONE ctermbg=NONE
-hi LineNr guibg=NONE ctermbg=NONE
-hi SignColumn guibg=NONE ctermbg=NONE
-hi EndOfBuffer guibg=NONE ctermbg=NONE
-"""""" Prettier settings
+" hi Normal guibg=NONE ctermbg=NONE
+" hi LineNr guibg=NONE ctermbg=NONE
+" hi SignColumn guibg=NONE ctermbg=NONE
+" hi EndOfBuffer guibg=NONE ctermbg=NONE
+
+""""""""""""""""""""" Prettier Settings
 let g:prettier#autoformat = 1
 let g:prettier#autoformat_require_pragma = 0
 let g:prettier#quickfix_enabled = 0
 let g:prettier#quickfix_auto_focus = 0
-"""""""""""""""""""" LSP Settings
+
+""""""""""""""""""""" LSP Settings
 lua << EOF
 require('lspconfig').tsserver.setup{}
 require'lspconfig'.eslint.setup{}
@@ -97,8 +109,24 @@ require'lspconfig'.html.setup{}
 require("nvim-lsp-installer").setup{}
 require('lualine').setup{}
 EOF
+lua require'colorizer'.setup()
 
-""""""""" Setup Completation with nvim-cmp
+"""""""""""""""""""" Change LSP warning/hint/error symbols in signcolumn
+lua << EOF
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = '⦸', -- Could be '●', '▎', 'x'
+  }
+})
+EOF
+
+"""""""""""""""""""" Setup Completation with nvim-cmp
 set completeopt=menu,menuone,noselect
 
 lua << EOF
@@ -205,7 +233,7 @@ cmp.setup {
 }
 EOF
 
-"""""""""" Setup Treesitter
+"""""""""""""""""""" Treesitter Settings
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
@@ -272,3 +300,31 @@ let g:closetag_regions = {
     \ }
 let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
+
+"""""""""""""" Setup Colorizer
+lua << EOF
+require 'colorizer'.setup {
+  -- '*'; -- Highlight all files, but customize some others.
+  css = {
+  RGB      = true;
+	RRGGBB   = true;
+	names    = false;
+	RRGGBBAA = true;
+	rgb_fn   = true;
+	hsl_fn   = true;
+	css      = true;
+	css_fn   = true;
+	mode     = 'background';};
+  html = { names = false; };
+  js = {
+  RGB      = true;
+	RRGGBB   = true;
+	names    = false;
+	RRGGBBAA = true;
+	rgb_fn   = true;
+	hsl_fn   = true;
+	css      = true;
+	css_fn   = true;
+	mode     = 'background';}
+}
+EOF
