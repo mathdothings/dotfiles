@@ -57,8 +57,8 @@ set noruler                 " Hide line/column number in the bottom panel
 set noshowmode              " Hide mode bar display in the bottom panel
 set guicursor=i:block       " Keep block cursor on insert mode
 set showmatch matchtime=3   " Jumps to mactching bracket
-set scrolloff=10            " Minimum number of lines to keep above and below the cursor     
-set colorcolumn=80          " Draws a line at the given line to keep aware of the line size
+set scrolloff=15            " Minimum number of lines to keep above and                                 below the cursor     
+set colorcolumn=80          " Draws a line at the given line to keep aware                              of the line size
 set signcolumn=yes:1        " Add a column on the left. Useful for linting
 set cmdheight=1             " Give more space for displaying messages
 set updatetime=100          " Time in miliseconds to consider the changes
