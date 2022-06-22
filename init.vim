@@ -1,12 +1,14 @@
 call plug#begin()
 """""""""""""""""""" Themes
-Plug 'Mofiqul/dracula.nvim'               " dracula
 Plug 'ayu-theme/ayu-vim'                  " ayu 
 Plug 'morhetz/gruvbox'                    " gruvbox 
 Plug 'navarasu/onedark.nvim'              " onedark 
-Plug 'shaunsingh/solarized.nvim'          " solarized
-Plug 'mhartington/oceanic-next'           " oceanic-next
 Plug 'EdenEast/nightfox.nvim'             " nightfox
+Plug 'tanvirtin/monokai.nvim'             " monokai
+Plug 'ghifarit53/tokyonight-vim'          " tokyonight
+Plug 'overcache/NeoSolarized'             " NeoSolarized
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+
 
 """""""""""""""""""" Lualine and dev-icons
 Plug 'nvim-lualine/lualine.nvim'          " Lualine - Beautiful modeline with icons
@@ -27,6 +29,7 @@ Plug 'hrsh7th/vim-vsnip'
 
 """""""""""""""""""" Treesitter for better syntax highlight
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+"""""""""""""""""""" Utilities plugins
 Plug 'alvan/vim-closetag'                 " HTML Autotag - write both inicial and closing tag
 Plug 'jiangmiao/auto-pairs'               " Auto pairs for brackets
 Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
@@ -34,6 +37,9 @@ Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
 """""""""""""""""""" Prettier for smart code syntax highlight
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 Plug 'norcalli/nvim-colorizer.lua'
+Plug 'preservim/nerdcommenter'
+Plug 'folke/zen-mode.nvim'
+Plug 'folke/twilight.nvim'
 call plug#end()
 
 """"""""""""""""""""" Ident/Space Settings
@@ -45,20 +51,35 @@ set indentexpr=
 set nocindent
 set nosmartindent
 
+""""""""""""""""""""" Search Settings
+set incsearch               " Incrementally highlight characters as you type
+set ignorecase              " Ignore capital letters during search
+set smartcase               " Allow you to search for specify capital letters if needed"
+set showmatch               " Show matching words during a search
+set hlsearch                " Uses highlight when performing a search
+
+""""""""""""""""""""" Wrap Settings
+set wrap
+set linebreak
+set textwidth=0
+set wrapmargin=0
+
 """"""""""""""""""""" Basic Settings
+filetype plugin on          " Enable plugins for specific filetype
 syntax on                   " Enable syntax highlight
 syntax enable               " Enable syntax highlight for some plugings
 set cursorline              " Enable highlight for current line
-set cursorlineopt=number    " Enable highlight just for current line number
+set cursorlineopt=both      " Enable highlight just for current line number
 set number                  " Show line numbers left side
+set relativenumber          " Show the relative line number
 set virtualedit +=onemore   " To go to end of line properly
 set showtabline=0           " Hide top 'filename' bar
 set noruler                 " Hide line/column number in the bottom panel
 set noshowmode              " Hide mode bar display in the bottom panel
 set guicursor=i:block       " Keep block cursor on insert mode
 set showmatch matchtime=3   " Jumps to mactching bracket
-set scrolloff=15            " Minimum number of lines to keep above and                                 below the cursor     
-set colorcolumn=80          " Draws a line at the given line to keep aware                              of the line size
+" set scrolloff=15            " Minimum number of lines to keep above and below the cursor     
+" set colorcolumn=80        " Draws a line at the given line to keep aware of the line size
 set signcolumn=yes:1        " Add a column on the left. Useful for linting
 set cmdheight=1             " Give more space for displaying messages
 set updatetime=100          " Time in miliseconds to consider the changes
@@ -70,8 +91,21 @@ set splitright              " Create the vertical splits to the right
 set splitbelow              " Create the horizontal splits below
 
 """"""""""""""""""""" Mappings
-noremap <M-j> <Esc>:m .+1<CR>==gn
-noremap <M-k> <Esc>:m .-2<CR>==gn
+inoremap jj <Esc>
+" nnoremap j jzz
+" nnoremap k kzz
+" nnoremap G Gzz
+nnoremap <space> <Esc>:
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+noremap <C-up> <C-w>+
+noremap <C-down> <C-w>-
+noremap <C-left> <C-w>>
+noremap <C-right> <C-w><
+nnoremap <M-j> <Esc>:m+1<CR>
+nnoremap <M-k> <Esc>:m-2<CR>
 vnoremap <M-j> :m '>+1<CR>gv=gv
 vnoremap <M-k> :m '<-2<CR>gv=gv
 let mapleader = "\\"        " <leader> key for commands
@@ -83,22 +117,36 @@ if (has("termguicolors"))
  set termguicolors
 endif
 " let ayucolor="dark"   " for dark version of theme
-let g:onedark_config = {
-    \ 'style': 'darker',
-\}
-let ayucolor="mirage"
-colorscheme nightfox
+" let g:onedark_config = {
+"     \ 'style': 'darker',
+" \}
+" let ayucolor="mirage"
+" Tokyo Night Settings
+" let g:tokyonight_style = 'night' " available: night, storm
+" let g:tokyonight_enable_italic = 1
+" set background=dark
+
+colorscheme monokai
+
 " Transparent background
-" hi Normal guibg=NONE ctermbg=NONE
-" hi LineNr guibg=NONE ctermbg=NONE
-" hi SignColumn guibg=NONE ctermbg=NONE
-" hi EndOfBuffer guibg=NONE ctermbg=NONE
+" highlight Normal guibg=NONE ctermbg=NONE
+" highlight LineNr guibg=NONE ctermbg=NONE
+" highlight SignColumn guibg=NONE ctermbg=NONE
+" highlight EndOfBuffer guibg=NONE ctermbg=NONE
+" highlight CursorLineNR guibg=NONE ctermbg=NONE
+
+" Transparent Completation
+" hi Pmenu ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
+" hi PmenuSbar ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
+" hi PmenuSel ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
+" hi PmenuThumb ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
 
 """"""""""""""""""""" Prettier Settings
 let g:prettier#autoformat = 1
 let g:prettier#autoformat_require_pragma = 0
 let g:prettier#quickfix_enabled = 0
 let g:prettier#quickfix_auto_focus = 0
+let g:prettier#config#print_width = 80
 
 """"""""""""""""""""" LSP Settings
 lua << EOF
@@ -149,7 +197,7 @@ lua << EOF
       ['<M-n>'] = cmp.mapping.scroll_docs(4),
       ['<M-q>'] = cmp.mapping.complete(),
       ['<M-f>'] = cmp.mapping.abort(),
-      ['<M-l>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
       ['<M-j>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
       ['<M-k>'] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
     }),
@@ -304,27 +352,61 @@ let g:closetag_close_shortcut = '<leader>>'
 """""""""""""" Setup Colorizer
 lua << EOF
 require 'colorizer'.setup {
-  -- '*'; -- Highlight all files, but customize some others.
-  css = {
-  RGB      = true;
-	RRGGBB   = true;
-	names    = false;
-	RRGGBBAA = true;
-	rgb_fn   = true;
-	hsl_fn   = true;
-	css      = true;
-	css_fn   = true;
-	mode     = 'background';};
-  html = { names = false; };
-  js = {
-  RGB      = true;
-	RRGGBB   = true;
-	names    = false;
-	RRGGBBAA = true;
-	rgb_fn   = true;
-	hsl_fn   = true;
-	css      = true;
-	css_fn   = true;
-	mode     = 'background';}
+  '*'; 
 }
 EOF
+
+"""""""""""""""" Setup Emmet snippet for responsiveness
+let g:user_emmet_settings = {
+\  'variables': {'lang': 'en'},
+\  'html': {
+\    'default_attributes': {
+\      'option': {'value': v:null},
+\      'textarea': {'id': v:null, 'name': v:null, 'cols': 10, 'rows': 10},
+\    },
+\    'snippets': {
+\      'html:5': "<!DOCTYPE html>\n"
+\              ."<html lang=\"${lang}\">\n"
+\              ."<head>\n"
+\              ."\t<meta charset=\"${charset}\">\n"
+\              ."\t<title></title>\n"
+\              ."\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+\              ."</head>\n"
+\              ."<body>\n\t${child}|\n</body>\n"
+\              ."</html>",
+\    },
+\  },
+\}
+
+" Setup zen-mode
+lua << EOF
+  require("zen-mode").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+
+" Setup twilight
+lua << EOF
+  require("twilight").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+    dimming = {
+    alpha = 0.05, -- amount of dimming
+    -- we try to get the foreground from the highlight groups or fallback color
+    color = { "Normal", "#ffffff" },
+    inactive = true, -- when true, other windows will be fully dimmed (unless they contain the same buffer)
+    
+  },
+}
+EOF
+
+" Keep cursor always centered
+:autocmd CursorMoved,CursorMovedI * call CentreCursor()
+function! CentreCursor()
+    let pos = getpos(".")
+    normal! zz
+    call setpos(".", pos)
+endfunction
