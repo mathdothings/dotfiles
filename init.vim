@@ -7,6 +7,7 @@ Plug 'EdenEast/nightfox.nvim'             " nightfox
 Plug 'tanvirtin/monokai.nvim'             " monokai
 Plug 'ghifarit53/tokyonight-vim'          " tokyonight
 Plug 'overcache/NeoSolarized'             " NeoSolarized
+Plug 'https://github.com/rakr/vim-one'
 Plug 'sonph/onehalf', {'rtp': 'vim/'}
 
 
@@ -37,9 +38,9 @@ Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
 """""""""""""""""""" Prettier for smart code syntax highlight
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 Plug 'norcalli/nvim-colorizer.lua'
-Plug 'preservim/nerdcommenter'
 Plug 'folke/zen-mode.nvim'
-Plug 'folke/twilight.nvim'
+Plug 'git@github.com:Yggdroot/indentLine.git'
+Plug 'git@github.com:tpope/vim-commentary.git'
 call plug#end()
 
 """"""""""""""""""""" Ident/Space Settings
@@ -69,7 +70,7 @@ filetype plugin on          " Enable plugins for specific filetype
 syntax on                   " Enable syntax highlight
 syntax enable               " Enable syntax highlight for some plugings
 set cursorline              " Enable highlight for current line
-set cursorlineopt=both      " Enable highlight just for current line number
+set cursorlineopt=number    " Enable highlight just for current line number
 set number                  " Show line numbers left side
 set relativenumber          " Show the relative line number
 set virtualedit +=onemore   " To go to end of line properly
@@ -89,6 +90,7 @@ set noswapfile              " Disable creating swapfile
 set nowritebackup           " No backup files
 set splitright              " Create the vertical splits to the right
 set splitbelow              " Create the horizontal splits below
+set formatoptions-=cro      " No commets on new line
 
 """"""""""""""""""""" Mappings
 inoremap jj <Esc>
@@ -126,7 +128,7 @@ endif
 " let g:tokyonight_enable_italic = 1
 " set background=dark
 
-colorscheme monokai
+colorscheme monokai_pro 
 
 " Transparent background
 " highlight Normal guibg=NONE ctermbg=NONE
@@ -387,22 +389,6 @@ lua << EOF
   }
 EOF
 
-" Setup twilight
-lua << EOF
-  require("twilight").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-    dimming = {
-    alpha = 0.05, -- amount of dimming
-    -- we try to get the foreground from the highlight groups or fallback color
-    color = { "Normal", "#ffffff" },
-    inactive = true, -- when true, other windows will be fully dimmed (unless they contain the same buffer)
-    
-  },
-}
-EOF
-
 " Keep cursor always centered
 :autocmd CursorMoved,CursorMovedI * call CentreCursor()
 function! CentreCursor()
@@ -410,3 +396,6 @@ function! CentreCursor()
     normal! zz
     call setpos(".", pos)
 endfunction
+
+" Identguide lines
+let g:indentLine_char = '▏'
