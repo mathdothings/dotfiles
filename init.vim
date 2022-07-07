@@ -1,15 +1,11 @@
 call plug#begin()
 """""""""""""""""""" Themes
-Plug 'ayu-theme/ayu-vim'                  " ayu 
 Plug 'morhetz/gruvbox'                    " gruvbox 
 Plug 'navarasu/onedark.nvim'              " onedark 
 Plug 'EdenEast/nightfox.nvim'             " nightfox
 Plug 'tanvirtin/monokai.nvim'             " monokai
 Plug 'ghifarit53/tokyonight-vim'          " tokyonight
-Plug 'overcache/NeoSolarized'             " NeoSolarized
-Plug 'https://github.com/rakr/vim-one'
-Plug 'sonph/onehalf', {'rtp': 'vim/'}
-
+Plug 'tomasiser/vim-code-dark'            " code-dark (dark+)
 
 """""""""""""""""""" Lualine and dev-icons
 Plug 'nvim-lualine/lualine.nvim'          " Lualine - Beautiful modeline with icons
@@ -32,7 +28,7 @@ Plug 'hrsh7th/vim-vsnip'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 """""""""""""""""""" Utilities plugins
 Plug 'alvan/vim-closetag'                 " HTML Autotag - write both inicial and closing tag
-Plug 'jiangmiao/auto-pairs'               " Auto pairs for brackets
+" Plug 'jiangmiao/auto-pairs'               " Auto pairs for brackets
 Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
 
 """""""""""""""""""" Prettier for smart code syntax highlight
@@ -41,6 +37,10 @@ Plug 'norcalli/nvim-colorizer.lua'
 Plug 'folke/zen-mode.nvim'
 Plug 'git@github.com:Yggdroot/indentLine.git'
 Plug 'git@github.com:tpope/vim-commentary.git'
+Plug 'git@github.com:tpope/vim-surround.git'
+Plug 'git@github.com:windwp/nvim-autopairs.git'
+Plug 'git@github.com:xiyaowong/nvim-transparent.git'
+
 call plug#end()
 
 """"""""""""""""""""" Ident/Space Settings
@@ -73,7 +73,7 @@ set cursorline              " Enable highlight for current line
 set cursorlineopt=number    " Enable highlight just for current line number
 set number                  " Show line numbers left side
 set relativenumber          " Show the relative line number
-set virtualedit +=onemore   " To go to end of line properly
+" set virtualedit +=onemore " To go to end of line properly
 set showtabline=0           " Hide top 'filename' bar
 set noruler                 " Hide line/column number in the bottom panel
 set noshowmode              " Hide mode bar display in the bottom panel
@@ -81,7 +81,7 @@ set guicursor=i:block       " Keep block cursor on insert mode
 set showmatch matchtime=3   " Jumps to mactching bracket
 " set scrolloff=15            " Minimum number of lines to keep above and below the cursor     
 " set colorcolumn=80        " Draws a line at the given line to keep aware of the line size
-set signcolumn=yes:1        " Add a column on the left. Useful for linting
+set signcolumn=yes:2        " Add a column on the left. Useful for linting
 set cmdheight=1             " Give more space for displaying messages
 set updatetime=100          " Time in miliseconds to consider the changes
 set encoding=utf-8          " The encoding should be utf-8 to activate the font icons
@@ -127,15 +127,18 @@ endif
 " let g:tokyonight_style = 'night' " available: night, storm
 " let g:tokyonight_enable_italic = 1
 " set background=dark
+" let g:material_theme_style = 'default' | 'palenight' | 'ocean' | 'lighter' | 'darker' | 'default-community' | 'palenight-community' | 'ocean-community' | 'lighter-community' | 'darker-community'
 
-colorscheme monokai_pro 
+let g:material_theme_style = 'default'
+colorscheme gruvbox
+
 
 " Transparent background
-" highlight Normal guibg=NONE ctermbg=NONE
-" highlight LineNr guibg=NONE ctermbg=NONE
-" highlight SignColumn guibg=NONE ctermbg=NONE
-" highlight EndOfBuffer guibg=NONE ctermbg=NONE
-" highlight CursorLineNR guibg=NONE ctermbg=NONE
+highlight Normal guibg=NONE ctermbg=NONE
+highlight LineNr guibg=NONE ctermbg=NONE
+highlight SignColumn guibg=NONE ctermbg=NONE
+highlight EndOfBuffer guibg=NONE ctermbg=NONE
+highlight CursorLineNR guibg=NONE ctermbg=NONE
 
 " Transparent Completation
 " hi Pmenu ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
@@ -171,7 +174,7 @@ end
 
 vim.diagnostic.config({
   virtual_text = {
-    prefix = '⦸', -- Could be '●', '▎', 'x'
+    prefix = '⦸ ', -- Could be '●', '▎', 'x'
   }
 })
 EOF
@@ -182,6 +185,16 @@ set completeopt=menu,menuone,noselect
 lua << EOF
   -- Setup nvim-cmp.
   local cmp = require'cmp'
+
+-- Maping <CR> for autocomplete --------------
+-- If you want insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+local cmp = require('cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
+----------------------------------------------
 
   cmp.setup({
     snippet = {
@@ -386,7 +399,18 @@ lua << EOF
     -- your configuration comes here
     -- or leave it empty to use the default settings
     -- refer to the configuration section below
-  }
+    window = {
+      width = 80,
+      },
+    plugins = {
+    -- disable some global vim options (vim.o...)
+    -- comment the lines to not apply the options
+    options = {
+      enabled = true,
+      },
+    IndentLineEnable = {enabled = true},
+  },
+}
 EOF
 
 " Keep cursor always centered
@@ -399,3 +423,54 @@ endfunction
 
 " Identguide lines
 let g:indentLine_char = '▏'
+
+" Autopairs with treesitter and nvim-autopairs
+lua << EOF
+local npairs = require("nvim-autopairs")
+local Rule = require('nvim-autopairs.rule')
+
+npairs.setup({
+    check_ts = true,
+    ts_config = {
+        lua = {'string'},-- it will not add a pair on that treesitter node
+        javascript = {'template_string'},
+        java = false,-- don't check treesitter on java
+    }
+})
+
+local ts_conds = require('nvim-autopairs.ts-conds')
+
+-- press % => %% only while inside a comment or string
+npairs.add_rules({
+  Rule("%", "%", "lua")
+    :with_pair(ts_conds.is_ts_node({'string','comment'})),
+  Rule("$", "$", "lua")
+    :with_pair(ts_conds.is_not_ts_node({'function'}))
+})
+EOF
+
+lua << EOF
+require("transparent").setup({
+  enable = true, -- boolean: enable transparent
+  extra_groups = { -- table/string: additional groups that should be cleared
+    -- In particular, when you set it to 'all', that means all available groups
+
+    -- example of akinsho/nvim-bufferline.lua
+    "BufferLineTabClose",
+    "BufferlineBufferSelected",
+    "BufferLineFill",
+    "BufferLineBackground",
+    "BufferLineSeparator",
+    "BufferLineIndicatorSelected",
+    "Pmenu",
+    "PmenuSbar",
+    "PmenuThumb",
+    "Normal",
+    "LineNr",
+    "SignColumn",
+    "EndOfBuffer",
+    "CursorLineNR",
+  },
+  exclude = {}, -- table: groups you don't want to clear
+})
+EOF
