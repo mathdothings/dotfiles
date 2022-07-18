@@ -93,7 +93,7 @@ set splitbelow              " Create the horizontal splits below
 set formatoptions-=cro      " No commets on new line
 
 """"""""""""""""""""" Mappings
-inoremap jj <Esc>
+" inoremap jj <Esc>
 " nnoremap j jzz
 " nnoremap k kzz
 " nnoremap G Gzz
@@ -118,27 +118,23 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
  set termguicolors
 endif
-" let ayucolor="dark"   " for dark version of theme
 " let g:onedark_config = {
 "     \ 'style': 'darker',
 " \}
-" let ayucolor="mirage"
 " Tokyo Night Settings
 " let g:tokyonight_style = 'night' " available: night, storm
 " let g:tokyonight_enable_italic = 1
-" set background=dark
-" let g:material_theme_style = 'default' | 'palenight' | 'ocean' | 'lighter' | 'darker' | 'default-community' | 'palenight-community' | 'ocean-community' | 'lighter-community' | 'darker-community'
 
-let g:material_theme_style = 'default'
+" set background=dark
 colorscheme gruvbox
 
 
 " Transparent background
-highlight Normal guibg=NONE ctermbg=NONE
-highlight LineNr guibg=NONE ctermbg=NONE
-highlight SignColumn guibg=NONE ctermbg=NONE
-highlight EndOfBuffer guibg=NONE ctermbg=NONE
-highlight CursorLineNR guibg=NONE ctermbg=NONE
+" highlight Normal guibg=NONE ctermbg=NONE
+" highlight LineNr guibg=NONE ctermbg=NONE
+" highlight SignColumn guibg=NONE ctermbg=NONE
+" highlight EndOfBuffer guibg=NONE ctermbg=NONE
+" highlight CursorLineNR guibg=NONE ctermbg=NONE
 
 " Transparent Completation
 " hi Pmenu ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE
@@ -164,6 +160,37 @@ require('lualine').setup{}
 EOF
 lua require'colorizer'.setup()
 
+lua << EOF
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'auto',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {},
+    always_divide_middle = true,
+    globalstatus = false,
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch'},
+    lualine_c = {'filename'},
+    lualine_x = {},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {},
+    lualine_x = {},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
+}
+EOF
 """""""""""""""""""" Change LSP warning/hint/error symbols in signcolumn
 lua << EOF
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
@@ -448,6 +475,7 @@ npairs.add_rules({
     :with_pair(ts_conds.is_not_ts_node({'function'}))
 })
 EOF
+
 
 lua << EOF
 require("transparent").setup({
