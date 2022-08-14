@@ -1,11 +1,10 @@
+" nnoremap gl g;
 call plug#begin()
 """""""""""""""""""" Themes
-Plug 'morhetz/gruvbox'                    " gruvbox 
-Plug 'navarasu/onedark.nvim'              " onedark 
-Plug 'EdenEast/nightfox.nvim'             " nightfox
-Plug 'tanvirtin/monokai.nvim'             " monokai
-Plug 'ghifarit53/tokyonight-vim'          " tokyonight
-Plug 'tomasiser/vim-code-dark'            " code-dark (dark+)
+Plug 'morhetz/gruvbox'
+let g:gruvbox_sign_column='dark0'
+" let g:gruvbox_transparent_bg=1
+Plug 'joshdick/onedark.vim'
 
 """""""""""""""""""" Lualine and dev-icons
 Plug 'nvim-lualine/lualine.nvim'          " Lualine - Beautiful modeline with icons
@@ -28,21 +27,24 @@ Plug 'hrsh7th/vim-vsnip'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 """""""""""""""""""" Utilities plugins
 Plug 'alvan/vim-closetag'                 " HTML Autotag - write both inicial and closing tag
-" Plug 'jiangmiao/auto-pairs'               " Auto pairs for brackets
 Plug 'mattn/emmet-vim'                    " Emmet for fast write HTML-like code
 
 """""""""""""""""""" Prettier for smart code syntax highlight
 Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 Plug 'norcalli/nvim-colorizer.lua'
-Plug 'folke/zen-mode.nvim'
 Plug 'git@github.com:Yggdroot/indentLine.git'
 Plug 'git@github.com:tpope/vim-commentary.git'
 Plug 'git@github.com:tpope/vim-surround.git'
 Plug 'git@github.com:windwp/nvim-autopairs.git'
 Plug 'git@github.com:xiyaowong/nvim-transparent.git'
-
+Plug 'sheerun/vim-polyglot'
+Plug 'p00f/nvim-ts-rainbow'
+Plug 'lewis6991/gitsigns.nvim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 call plug#end()
 
+" Trim all whitespaces
+autocmd FileType js,html,css,vim autocmd BufWritePre <buffer> %s/\s\+$//e
 """"""""""""""""""""" Ident/Space Settings
 set expandtab
 set shiftwidth=2
@@ -50,14 +52,14 @@ set tabstop=2
 set softtabstop=2
 set indentexpr=
 set nocindent
-set nosmartindent
+set smartindent     " on
 
 """"""""""""""""""""" Search Settings
 set incsearch               " Incrementally highlight characters as you type
 set ignorecase              " Ignore capital letters during search
 set smartcase               " Allow you to search for specify capital letters if needed"
 set showmatch               " Show matching words during a search
-set hlsearch                " Uses highlight when performing a search
+set nohlsearch              " Uses highlight when performing a search
 
 """"""""""""""""""""" Wrap Settings
 set wrap
@@ -70,7 +72,7 @@ filetype plugin on          " Enable plugins for specific filetype
 syntax on                   " Enable syntax highlight
 syntax enable               " Enable syntax highlight for some plugings
 set cursorline              " Enable highlight for current line
-set cursorlineopt=number    " Enable highlight just for current line number
+set cursorlineopt=both  " Enable highlight just for current line number
 set number                  " Show line numbers left side
 set relativenumber          " Show the relative line number
 " set virtualedit +=onemore " To go to end of line properly
@@ -78,12 +80,12 @@ set showtabline=0           " Hide top 'filename' bar
 set noruler                 " Hide line/column number in the bottom panel
 set noshowmode              " Hide mode bar display in the bottom panel
 set guicursor=i:block       " Keep block cursor on insert mode
-set showmatch matchtime=3   " Jumps to mactching bracket
-" set scrolloff=15            " Minimum number of lines to keep above and below the cursor     
+" set showmatch matchtime=3   " Jumps to mactching bracket
+" set scrolloff=15            " Minimum number of lines to keep above and below the cursor
 " set colorcolumn=80        " Draws a line at the given line to keep aware of the line size
-set signcolumn=yes:2        " Add a column on the left. Useful for linting
+set signcolumn=yes          " Add a column on the left. Useful for linting
 set cmdheight=1             " Give more space for displaying messages
-set updatetime=100          " Time in miliseconds to consider the changes
+set updatetime=1000         " Time in miliseconds to consider the changes
 set encoding=utf-8          " The encoding should be utf-8 to activate the font icons
 set nobackup                " No backup files
 set noswapfile              " Disable creating swapfile
@@ -118,16 +120,9 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 if (has("termguicolors"))
  set termguicolors
 endif
-" let g:onedark_config = {
-"     \ 'style': 'darker',
-" \}
-" Tokyo Night Settings
-" let g:tokyonight_style = 'night' " available: night, storm
-" let g:tokyonight_enable_italic = 1
 
-" set background=dark
+set background=dark
 colorscheme gruvbox
-
 
 " Transparent background
 " highlight Normal guibg=NONE ctermbg=NONE
@@ -155,8 +150,19 @@ require('lspconfig').tsserver.setup{}
 require'lspconfig'.eslint.setup{}
 require'lspconfig'.cssls.setup{}
 require'lspconfig'.html.setup{}
+require'lspconfig'.marksman.setup{}
 require("nvim-lsp-installer").setup{}
 require('lualine').setup{}
+require'lspconfig'.stylelint_lsp.setup{
+  settings = {
+    stylelintplus = {
+      -- see available options in stylelint-lsp documentation
+      autoFixOnSave = true,
+      autoFixOnFormat = true,
+      validateOnSave = true
+    }
+  }
+}
 EOF
 lua require'colorizer'.setup()
 
@@ -165,8 +171,8 @@ require('lualine').setup {
   options = {
     icons_enabled = true,
     theme = 'auto',
-    component_separators = { left = '', right = ''},
-    section_separators = { left = '', right = ''},
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
     disabled_filetypes = {},
     always_divide_middle = true,
     globalstatus = false,
@@ -316,7 +322,7 @@ cmp.setup {
   formatting = {
     format = function(entry, vim_item)
       -- Kind icons
-      vim_item.kind = string.format('%s', kind_icons[vim_item.kind]) -- This concatonates the icons 
+      vim_item.kind = string.format('%s', kind_icons[vim_item.kind]) -- This concatonates the icons
       return vim_item
     end
   },
@@ -333,7 +339,7 @@ require'nvim-treesitter.configs'.setup {
   sync_install = false,
 
   -- List of parsers to ignore installing (for "all")
-  ignore_install = { "javascript" },
+  ignore_install = { "" },
 
   highlight = {
     -- `false` will disable the whole extension
@@ -343,7 +349,7 @@ require'nvim-treesitter.configs'.setup {
     -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
     -- the name of the parser)
     -- list of language that will be disabled
-    disable = { "c", "rust" },
+    disable = { "" },
 
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
@@ -394,7 +400,7 @@ let g:closetag_close_shortcut = '<leader>>'
 """""""""""""" Setup Colorizer
 lua << EOF
 require 'colorizer'.setup {
-  '*'; 
+  '*';
 }
 EOF
 
@@ -419,26 +425,6 @@ let g:user_emmet_settings = {
 \    },
 \  },
 \}
-
-" Setup zen-mode
-lua << EOF
-  require("zen-mode").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-    window = {
-      width = 80,
-      },
-    plugins = {
-    -- disable some global vim options (vim.o...)
-    -- comment the lines to not apply the options
-    options = {
-      enabled = true,
-      },
-    IndentLineEnable = {enabled = true},
-  },
-}
-EOF
 
 " Keep cursor always centered
 :autocmd CursorMoved,CursorMovedI * call CentreCursor()
@@ -479,11 +465,8 @@ EOF
 
 lua << EOF
 require("transparent").setup({
-  enable = true, -- boolean: enable transparent
-  extra_groups = { -- table/string: additional groups that should be cleared
-    -- In particular, when you set it to 'all', that means all available groups
-
-    -- example of akinsho/nvim-bufferline.lua
+  enable = false,
+  extra_groups = {
     "BufferLineTabClose",
     "BufferlineBufferSelected",
     "BufferLineFill",
@@ -499,6 +482,166 @@ require("transparent").setup({
     "EndOfBuffer",
     "CursorLineNR",
   },
-  exclude = {}, -- table: groups you don't want to clear
+  exclude = {},
 })
 EOF
+
+lua << EOF
+require("nvim-treesitter.configs").setup {
+  highlight = {
+      -- ...
+  },
+  -- ...
+  rainbow = {
+    enable = false,
+    -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+    max_file_lines = nil, -- Do not enable for files with more than n lines, int
+    -- colors = {}, -- table of hex strings
+    -- termcolors = {} -- table of colour name strings
+  }
+}
+EOF
+
+lua << EOF
+require('gitsigns').setup {
+  signs = {
+    add          = {hl = 'GitSignsAdd'   , text = '│', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+    change       = {hl = 'GitSignsChange', text = '│', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+  },
+  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  watch_gitdir = {
+    interval = 1000,
+    follow_files = true
+  },
+  attach_to_untracked = true,
+  current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+  current_line_blame_opts = {
+    virt_text = true,
+    virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+    delay = 1000,
+    ignore_whitespace = false,
+  },
+  current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+  sign_priority = 6,
+  update_debounce = 100,
+  status_formatter = nil, -- Use default
+  max_file_length = 40000,
+  preview_config = {
+    -- Options passed to nvim_open_win
+    border = 'solid',
+    style = 'minimal',
+    relative = 'cursor',
+    row = 0,
+    col = 1
+  },
+  yadm = {
+    enable = false
+  },
+}
+EOF
+
+" set to 1, nvim will open the preview window after entering the markdown buffer
+" default: 0
+let g:mkdp_auto_start = 0
+
+" set to 1, the nvim will auto close current preview window when change
+" from markdown buffer to another buffer
+" default: 1
+let g:mkdp_auto_close = 1
+
+" set to 1, the vim will refresh markdown when save the buffer or
+" leave from insert mode, default 0 is auto refresh markdown as you edit or
+" move the cursor
+" default: 0
+let g:mkdp_refresh_slow = 0
+
+" set to 1, the MarkdownPreview command can be use for all files,
+" by default it can be use in markdown file
+" default: 0
+let g:mkdp_command_for_global = 0
+
+" set to 1, preview server available to others in your network
+" by default, the server listens on localhost (127.0.0.1)
+" default: 0
+let g:mkdp_open_to_the_world = 0
+
+" use custom IP to open preview page
+" useful when you work in remote vim and preview on local browser
+" more detail see: https://github.com/iamcco/markdown-preview.nvim/pull/9
+" default empty
+let g:mkdp_open_ip = ''
+
+" specify browser to open preview page
+" for path with space
+" valid: `/path/with\ space/xxx`
+" invalid: `/path/with\\ space/xxx`
+" default: ''
+let g:mkdp_browser = ''
+
+" set to 1, echo preview page url in command line when open preview page
+" default is 0
+let g:mkdp_echo_preview_url = 0
+
+" a custom vim function name to open preview page
+" this function will receive url as param
+" default is empty
+let g:mkdp_browserfunc = ''
+
+" options for markdown render
+" mkit: markdown-it options for render
+" katex: katex options for math
+" uml: markdown-it-plantuml options
+" maid: mermaid options
+" disable_sync_scroll: if disable sync scroll, default 0
+" sync_scroll_type: 'middle', 'top' or 'relative', default value is 'middle'
+"   middle: mean the cursor position alway show at the middle of the preview page
+"   top: mean the vim top viewport alway show at the top of the preview page
+"   relative: mean the cursor position alway show at the relative positon of the preview page
+" hide_yaml_meta: if hide yaml metadata, default is 1
+" sequence_diagrams: js-sequence-diagrams options
+" content_editable: if enable content editable for preview page, default: v:false
+" disable_filename: if disable filename header for preview page, default: 0
+let g:mkdp_preview_options = {
+    \ 'mkit': {},
+    \ 'katex': {},
+    \ 'uml': {},
+    \ 'maid': {},
+    \ 'disable_sync_scroll': 0,
+    \ 'sync_scroll_type': 'middle',
+    \ 'hide_yaml_meta': 1,
+    \ 'sequence_diagrams': {},
+    \ 'flowchart_diagrams': {},
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0,
+    \ 'toc': {}
+    \ }
+
+" use a custom markdown style must be absolute path
+" like '/Users/username/markdown.css' or expand('~/markdown.css')
+let g:mkdp_markdown_css = ''
+
+" use a custom highlight style must absolute path
+" like '/Users/username/highlight.css' or expand('~/highlight.css')
+let g:mkdp_highlight_css = ''
+
+" use a custom port to start server or empty for random
+let g:mkdp_port = ''
+
+" preview page title
+" ${name} will be replace with the file name
+let g:mkdp_page_title = '「${name}」'
+
+" recognized filetypes
+" these filetypes will have MarkdownPreview... commands
+let g:mkdp_filetypes = ['markdown']
+
+" set default theme (dark or light)
+" By default the theme is define according to the preferences of the system
+let g:mkdp_theme = 'light'
