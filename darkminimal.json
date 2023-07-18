@@ -8,19 +8,16 @@
           "foreground": "#5f9dcb",
           "style": "plain",
           "template": "\u279c",
-          "type": "session"
+          "type": "text"
         },
         {
-          "foreground": "#7FD5EA",
-          "style": "powerline",
-          "template": "(\ue626{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
-          "type": "go"
-        },
-        {
-          "foreground": "#9e7eff",
-          "style": "powerline",
-          "template": "(\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}) ",
-          "type": "python"
+          "foreground": "#dcdcaa",
+          "properties": {
+            "style": "folder"
+          },
+          "style": "plain",
+          "template": " {{ .Path }} ",
+          "type": "path"
         },
         {
           "foreground": "#56B6C2",
@@ -28,42 +25,14 @@
             "branch_icon": ""
           },
           "style": "plain",
-          "template": " <#dcdcaa>(</>{{ .HEAD }}<#dcdcaa>) </>",
+          "template": "<#dcdcaa>git:(</>{{ .HEAD }}<#dcdcaa>)</>",
           "type": "git"
         },
         {
-          "foreground": "#FFAB91",
-          "properties": {
-            "always_enabled": false,
-            "style": "austin",
-            "threshold": 100
-          },
-          "style": "powerline",
-          "template": "{{ .FormattedMs }}",
-          "type": "executiontime"
-        }
-      ],
-      "type": "prompt"
-    },
-    {
-      "alignment": "left",
-      "newline": true,
-      "segments": [
-        {
-          "foreground": "#193549",
-          "foreground_templates": [
-            "{{if eq \"Charging\" .State.String}}#64B5F6{{end}}",
-            "{{if eq \"Discharging\" .State.String}}#E36464{{end}}",
-            "{{if eq \"Full\" .State.String}}#66BB6A{{end}}"
-          ],
-          "properties": {
-            "charged_icon": "\ue22f ",
-            "charging_icon": "\ue234 ",
-            "discharging_icon": "\ue231 "
-          },
-          "style": "powerline",
-          "template": "[{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295]",
-          "type": "battery"
+          "foreground": "#BF616A",
+          "style": "plain",
+          "template": " \u2717",
+          "type": "exit"
         }
       ],
       "type": "prompt"
