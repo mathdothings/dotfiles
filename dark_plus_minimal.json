@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/mathdothings/dotfiles/master/darkminimal.json",
+  "$schema": "https://raw.githubusercontent.com/mathdothings/dotfiles/master/dark_plus_minimal.json",
   "blocks": [
     {
       "alignment": "left",
