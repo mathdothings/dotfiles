@@ -5,7 +5,7 @@
       "alignment": "left",
       "segments": [
         {
-          "foreground": "#FFE082",
+          "foreground": "#5f9dcb",
           "style": "plain",
           "template": "\u279c",
           "type": "session"
@@ -28,7 +28,7 @@
             "branch_icon": ""
           },
           "style": "plain",
-          "template": " <#E8CC97>(</>{{ .HEAD }}<#E8CC97>) </>",
+          "template": " <#c38872>(</>{{ .HEAD }}<#c38872>) </>",
           "type": "git"
         },
         {
