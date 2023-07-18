@@ -5,6 +5,12 @@
       "alignment": "left",
       "segments": [
         {
+          "foreground": "#FFE082",
+          "style": "plain",
+          "template": "\u279c",
+          "type": "session"
+        },
+        {
           "foreground": "#7FD5EA",
           "style": "powerline",
           "template": "(\ue626{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
