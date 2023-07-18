@@ -11,6 +11,15 @@
           "type": "session"
         },
         {
+          "foreground": "#56B6C2",
+          "properties": {
+            "style": "agnoster_short"
+          },
+          "style": "plain",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
           "foreground": "#7FD5EA",
           "style": "powerline",
           "template": "(\ue626{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
