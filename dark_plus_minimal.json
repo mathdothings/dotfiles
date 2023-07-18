@@ -25,7 +25,7 @@
             "branch_icon": ""
           },
           "style": "plain",
-          "template": "<#C586C0>git:(</#C586C0>{{ .HEAD }}<#C586C0>)</#C586C0>",
+          "template": "<#DCDCAA>git:(</#C586C0>{{ .HEAD }}<#C586C0>)<#DCDCAA>",
           "type": "git"
         },
         {
