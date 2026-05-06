@@ -46,5 +46,48 @@
         "key": "ctrl+shift+q",
         "command": "workbench.action.quickOpenNavigatePreviousInViewPicker",
         "when": "inQuickOpen && inViewsPicker"
+    },
+    {
+        "key": "ctrl+shift+k ctrl+shift+l",
+        "command": "workbench.files.action.collapseExplorerFolders"
+    },
+    {
+        "key": "alt+m",
+        "command": "bookmarks.toggle",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "-bookmarks.toggle",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+n",
+        "command": "bookmarks.jumpToNext",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "-bookmarks.jumpToNext",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+b",
+        "command": "bookmarks.jumpToPrevious",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+j",
+        "command": "-bookmarks.jumpToPrevious",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+f7",
+        "command": "-chatEditor.action.toggleDiff",
+        "when": "chatEdits.hasEditorModifications && editorFocus"
+    },
+    {
+        "key": "ctrl+alt+l",
+        "command": "workbench.action.chat.toggle"
     }
 ]
